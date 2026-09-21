@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal Mata Angin - Persona Research</title>
-  
-  <!-- CSS Tailwind via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -16,17 +14,14 @@
               dark: '#001233',
               navy: '#001845',
               blue: '#0466c8',
-              accent: '#0077b6',
-              light: '#f8f9fa'
+              accent: '#0077b6'
             }
           }
         }
       }
     }
   </script>
-
   <style>
-    /* Security: Anti-select & Anti-copy */
     body {
       -webkit-user-select: none;
       -moz-user-select: none;
@@ -48,18 +43,19 @@
         <p class="text-sm text-slate-500 mt-1">Masukkan password untuk membuka portal menu.</p>
       </div>
 
-      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+      <form onsubmit="checkPassword(event)" class="space-y-4">
         <div>
-          <label for="passwordInput" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Password Portal</label>
+          <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Password Portal</label>
           <input 
             type="password" 
             id="passwordInput" 
             placeholder="Masukkan password..." 
             class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-blue text-sm transition"
             required
+            autocomplete="off"
           >
         </div>
-        <p id="errorMessage" class="text-red-500 text-xs hidden">Password salah. Silakan coba lagi.</p>
+        <p id="errorMessage" class="text-red-500 text-xs hidden font-medium">Password salah. Silakan coba lagi.</p>
         <button 
           type="submit" 
           class="w-full py-3 bg-brand-navy hover:bg-brand-blue text-white font-medium rounded-lg shadow transition duration-200 text-sm"
@@ -71,7 +67,7 @@
   </div>
 
   <!-- KONTEN UTAMA PORTAL -->
-  <div id="mainContent" class="opacity-0 transition-opacity duration-300 flex-grow flex flex-col justify-between">
+  <div id="mainContent" class="hidden flex-grow flex flex-col justify-between">
     
     <!-- HEADER -->
     <header class="bg-brand-dark text-white border-b border-brand-navy">
@@ -96,7 +92,7 @@
         <span class="text-xs bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full font-medium">Auto-Shuffled</span>
       </div>
 
-      <!-- GRID MENU (Urutan diacak otomatis saat muat) -->
+      <!-- GRID MENU -->
       <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         
         <!-- Item 1 -->
@@ -159,51 +155,44 @@
 
   </div>
 
-  <!-- JAVASCRIPT & SECURITY LOGIC -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // Hash SHA-256 untuk kata kunci "persona05" (selalu dikonversi ke huruf kecil)
-    const TARGET_PASSWORD_HASH = "81ff5bd2208761ed81e0be6c87ed9ee17fa8331bb7d0b38d0f191a6d912ef322";
+    // Password Kunci
+    const CORRECT_PASSWORD = "persona05";
 
-    // 1. Fungsi Hash SHA-256
-    async function hashPassword(str) {
-      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // 2. Proteksi Login & Sesi (Case-Insensitive)
-    async function handleLogin(e) {
+    // 1. Fungsi Cek Password
+    function checkPassword(e) {
       e.preventDefault();
-      // Mengubah input pengguna menjadi huruf kecil (lowercase) agar huruf besar/kecil tidak berpengaruh
-      const rawInput = document.getElementById('passwordInput').value.trim().toLowerCase();
+      const userPass = document.getElementById('passwordInput').value.trim().toLowerCase();
       const errorMsg = document.getElementById('errorMessage');
-      
-      const hashedInput = await hashPassword(rawInput);
-      if (hashedInput === TARGET_PASSWORD_HASH) {
-        sessionStorage.setItem('portal_authenticated', 'true');
-        unlockPortal();
+
+      if (userPass === CORRECT_PASSWORD) {
+        sessionStorage.setItem('isLogged', 'true');
+        showContent();
       } else {
         errorMsg.classList.remove('hidden');
       }
     }
 
-    function unlockPortal() {
+    // 2. Tampilkan Konten Utamanya
+    function showContent() {
       document.getElementById('passwordOverlay').classList.add('hidden');
-      const content = document.getElementById('mainContent');
-      content.classList.remove('opacity-0');
+      document.getElementById('mainContent').classList.remove('hidden');
       shuffleMenu();
-      startCountdown();
+      startTimer();
     }
 
-    // Check sesi saat pertama dimuat
-    if (sessionStorage.getItem('portal_authenticated') === 'true') {
-      unlockPortal();
+    // Auto Login jika sudah pernah memasukkan password di sesi browser ini
+    if (sessionStorage.getItem('isLogged') === 'true') {
+      showContent();
     }
 
-    // 3. Auto-Shuffle Menu Items
+    // 3. Acak Menu Otomatis
     function shuffleMenu() {
       const grid = document.getElementById('menuGrid');
+      if (!grid) return;
       const items = Array.from(grid.children);
-      const pdfItem = items.pop(); // Pertahankan PDF di posisi paling bawah
+      const pdfItem = items.pop();
       
       for (let i = items.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -215,40 +204,36 @@
       grid.appendChild(pdfItem);
     }
 
-    // 4. Hitung Mundur Kedaluwarsa (Tepat 6 Bulan dari Sekarang)
-    function startCountdown() {
-      const targetDate = new Date();
-      targetDate.setMonth(targetDate.getMonth() + 6);
+    // 4. Hitung Mundur 6 Bulan
+    function startTimer() {
+      const expiryDate = new Date();
+      expiryDate.setMonth(expiryDate.getMonth() + 6);
 
-      function updateTimer() {
+      function update() {
         const now = new Date().getTime();
-        const distance = targetDate.getTime() - now;
+        const diff = expiryDate.getTime() - now;
 
-        if (distance < 0) {
+        if (diff <= 0) {
           document.getElementById('countdownDisplay').innerText = "KEDALUWARSA";
-          document.getElementById('mainContent').innerHTML = "<div class='p-10 text-center text-red-600 font-bold'>Akses ke portal ini telah habis masa berlakunya.</div>";
+          document.getElementById('mainContent').innerHTML = "<div class='p-10 text-center text-red-600 font-bold'>Masa berlaku akses portal telah habis.</div>";
           return;
         }
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-        document.getElementById('countdownDisplay').innerText = `${days}d ${hours}h ${minutes}m`;
+        document.getElementById('countdownDisplay').innerText = `${d}d ${h}h ${m}m`;
       }
 
-      updateTimer();
-      setInterval(updateTimer, 60000);
+      update();
+      setInterval(update, 60000);
     }
 
-    // 5. Anti-Copy & Anti-Shortcut Protections
+    // Proteksi Tambahan
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
-      if (
-        e.key === 'F12' || 
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-        (e.ctrlKey && e.key === 'u')
-      ) {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'u')) {
         e.preventDefault();
       }
     });
