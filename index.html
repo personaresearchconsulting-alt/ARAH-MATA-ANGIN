@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mata Angin Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            800: '#0b1d3a',
+                            900: '#0a192f',
+                            950: '#060d19',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Header Section -->
+    <header class="bg-navy-900 text-white border-b border-navy-800 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Mata Angin System</h1>
+                        <p class="text-xs text-slate-400 font-mono mt-0.5">PERSONA RESEARCH & CONSULTING</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 bg-navy-950/60 border border-slate-800 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 w-fit">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>System Online</span>
+                    <span class="text-slate-600">|</span>
+                    <span class="text-slate-400 font-mono">v2.4</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+        
+        <!-- Status & Countdown Banner -->
+        <div class="bg-white border border-slate-200 rounded-xl p-6 mb-8 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="space-y-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            Active Passkey
+                        </span>
+                        <span class="text-xs text-slate-500">6-Month Duration</span>
+                    </div>
+                    <h2 class="text-lg font-semibold text-slate-900 pt-1">Access Passkey Expiration Status</h2>
+                    <p class="text-sm text-slate-600">Valid until <span class="font-medium text-slate-900">21 March 2027</span>. Requires periodic renewal.</p>
+                </div>
+
+                <!-- Countdown Block -->
+                <div class="bg-slate-900 text-white px-5 py-3.5 rounded-lg border border-slate-800 flex items-center space-x-4 shrink-0">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-wider font-mono text-slate-400 mb-0.5">Time Remaining</div>
+                        <div id="countdown-timer" class="font-mono text-xl sm:text-2xl font-bold tracking-tight text-blue-400">
+                            Calculating...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Section -->
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Select Destination Vector</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- Link 1 -->
+                <a href="mata_angin_1.html" class="group bg-white border border-slate-200 hover:border-blue-500 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-start justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-mono text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">01</span>
+                            <h4 class="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">Mata Angin 1</h4>
+                        </div>
+                        <p class="text-sm text-slate-600">Akses modul utama dan parameter konfigurasi vektor 1.</p>
+                    </div>
+                    <div class="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Link 2 -->
+                <a href="mata_angin_2.html" class="group bg-white border border-slate-200 hover:border-blue-500 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-start justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-mono text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">02</span>
+                            <h4 class="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">Mata Angin 2</h4>
+                        </div>
+                        <p class="text-sm text-slate-600">Portal sekunder untuk pemantauan parameter sistem vektor 2.</p>
+                    </div>
+                    <div class="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Link 3 -->
+                <a href="mata_angin_3.html" class="group bg-white border border-slate-200 hover:border-blue-500 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-start justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-mono text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">03</span>
+                            <h4 class="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">Mata Angin 3</h4>
+                        </div>
+                        <p class="text-sm text-slate-600">Akses antarmuka terspesialisasi untuk analisis vektor 3.</p>
+                    </div>
+                    <div class="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Link Mix -->
+                <a href="mata_angin_mix.html" class="group bg-white border border-slate-200 hover:border-blue-500 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-start justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-mono text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-0.5 rounded border border-purple-100">MIX</span>
+                            <h4 class="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">Mata Angin Mix</h4>
+                        </div>
+                        <p class="text-sm text-slate-600">Integrasi gabungan dari seluruh node sistem Mata Angin.</p>
+                    </div>
+                    <div class="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- PDF Document Card -->
+        <div class="mt-6 bg-slate-900 text-white rounded-xl p-6 border border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-start space-x-4">
+                <div class="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white">Dokumen Panduan (PDF)</h4>
+                    <p class="text-sm text-slate-400 mt-0.5">Unduh atau lihat spesifikasi otentikasi resmi <span class="font-mono text-slate-300">mata_angin.pdf</span>.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 shrink-0">
+                <button onclick="openPdfModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900">
+                    Buka PDF
+                </button>
+                <a href="mata_angin.pdf" download class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-medium rounded-lg transition-colors">
+                    Unduh
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- PDF Viewer Modal -->
+    <div id="pdf-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-2xl w-full p-6 relative">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <h3 class="font-semibold text-slate-900">Akses Dokumen mata_angin.pdf</h3>
+                </div>
+                <button onclick="closePdfModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="text-center py-6 space-y-4">
+                <p class="text-sm text-slate-600">Pilih opsi di bawah untuk membuka atau mengunduh berkas dokumen resmi Mata Angin System.</p>
+                
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                    <a href="mata_angin.pdf" target="_blank" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg shadow-sm transition-colors text-center">
+                        Buka di Tab Baru
+                    </a>
+                    <a href="mata_angin.pdf" download class="w-full sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-sm font-medium rounded-lg transition-colors text-center">
+                        Unduh Berkas PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <div class="flex items-center space-x-2">
+                <span class="font-semibold text-slate-700">Mata Angin System</span>
+                <span>&copy; 2026-2027 All Rights Reserved.</span>
+            </div>
+            <div>
+                Dikelola secara internal untuk verifikasi kredensial GitHub.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Section -->
+    <script>
+        // Target expiration date set to 6 months ahead: March 21, 2027
+        const targetExpirationDate = new Date("2027-03-21T23:59:59").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetExpirationDate - now;
+
+            if (distance < 0) {
+                document.getElementById("countdown-timer").innerText = "EXPIRED";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown-timer").innerText = 
+                `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // PDF Modal Handlers
+        function openPdfModal() {
+            document.getElementById('pdf-modal').classList.remove('hidden');
+        }
+
+        function closePdfModal() {
+            document.getElementById('pdf-modal').classList.add('hidden');
+        }
+
+        // Close modal when clicking background
+        document.getElementById('pdf-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePdfModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PERSONA RESEARCH & CONSULTING - Tes Penalaran Arah (Set Sedang)</title>
+    <style>
+        :root { --navy: #0b2340; --gold: #d4a017; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #1e293b; -webkit-user-select: none; user-select: none; }
+        header { background: var(--navy); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--gold); }
+        .container { max-width: 950px; margin: 20px auto; padding: 0 15px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .opt { padding: 14px; margin: 8px 0; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .opt:hover { background: #f1f5f9; border-color: var(--navy); }
+        .opt.selected { background: #e0f2fe; border-color: var(--navy); font-weight: bold; }
+        .nav-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin-top: 15px; }
+        .nav-item { height: 35px; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .nav-item.filled { background: var(--navy); color: white; }
+        .nav-item.active { border: 2px solid var(--gold); }
+        .btn { background: var(--navy); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { opacity: 0.9; }
+        .btn-gold { background: var(--gold); color: var(--navy); }
+        #timer { font-size: 20px; font-weight: bold; color: var(--gold); font-family: monospace; }
+        
+        .rekap-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        .rekap-table th, .rekap-table td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
+        .rekap-table th { background-color: var(--navy); color: white; }
+        .badge-benar { color: #16a34a; font-weight: bold; }
+        .badge-salah { color: #dc2626; font-weight: bold; }
+        .badge-kosong { color: #d97706; font-weight: bold; }
+        .pembahasan-box { background: #f1f5f9; border-left: 4px solid var(--navy); padding: 12px; margin-top: 10px; font-size: 13.5px; border-radius: 0 6px 6px 0; }
+        
+        @media print {
+            header, .no-print, button { display: none !important; }
+            body { background: white; color: black; -webkit-user-select: auto; user-select: auto; }
+            .container { max-width: 100%; margin: 0; padding: 0; }
+            .card { box-shadow: none; border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false">
+
+<div class="container">
+    <header>
+        <div>
+            <b>PERSONA RESEARCH & CONSULTING</b> | TES PENALARAN ARAH (SET SEDANG)
+            <div style="font-size: 11px; font-weight: normal; color: #cbd5e1;">Latihan Penalaran Arah — Persiapan Seleksi POLRI</div>
+        </div>
+        <div id="timer">45:00</div>
+    </header>
+
+    <!-- Halaman Pengerjaan Soal -->
+    <div id="page-test" style="margin-top:20px;">
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            <div style="flex:3; min-width:280px;">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <div id="q-no" style="font-weight:bold; color:var(--navy);">Soal 1 dari 50</div>
+                        <div id="q-kat" style="font-size:12px; background:#e0f2fe; color:var(--navy); padding:3px 8px; border-radius:4px; font-weight:600;">Kategori</div>
+                    </div>
+                    <div id="q-text" style="font-size:15px; line-height:1.6; margin-bottom:20px;"></div>
+                    <div id="options"></div>
+                    <div style="margin-top:25px; display:flex; justify-content:space-between;">
+                        <button class="btn" onclick="prevQ()" style="background:#64748b">Sebelumnya</button>
+                        <button class="btn" id="btn-next" onclick="nextQ()">Selanjutnya</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="flex:1; min-width:220px;">
+                <div class="card" style="padding:15px;">
+                    <div style="text-align:center; font-size:12px; font-weight:bold; margin-bottom:10px; color:var(--navy);">NAVIGASI SOAL</div>
+                    <div id="navGrid" class="nav-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Halaman Hasil & Pembahasan -->
+    <div id="page-result" style="display:none; margin-top:20px;">
+        <div class="card">
+            <h2 style="color:var(--navy); border-bottom:2px solid var(--gold); padding-bottom:10px; margin-top:0;">HASIL TES PENALARAN ARAH (SET SEDANG)</h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px; margin:20px 0;">
+                <div style="background:#f1f5f9; padding:12px; border-radius:8px; text-align:center;">
+                    <div style="font-size:12px; color:#64748b;">SKOR AKHIR</div>
+                    <div id="res-skor" style="font-size:22px; font-weight:bold; color:var(--navy);">-</div>
+                </div>
+                <div style="background:#f1f5f9; padding:12px; border-radius:8px; text-align:center;">
+                    <div style="font-size:12px; color:#64748b;">PERSENTASE</div>
+                    <div id="res-persen" style="font-size:22px; font-weight:bold; color:var(--navy);">-</div>
+                </div>
+                <div style="background:#f1f5f9; padding:12px; border-radius:8px; text-align:center;">
+                    <div style="font-size:12px; color:#64748b;">BENAR / SALAH / KOSONG</div>
+                    <div id="res-detail" style="font-size:16px; font-weight:bold; color:var(--navy);">-</div>
+                </div>
+            </div>
+
+            <button class="btn btn-gold no-print" onclick="window.print()" style="width:100%; margin-bottom:20px; font-size:15px;">DOWNLOAD / PRINT HASIL PDF</button>
+
+            <h3 style="color:var(--navy); margin-top:25px;">ANALISIS PER KATEGORI KEMAMPUAN</h3>
+            <table class="rekap-table" id="table-kategori">
+                <thead>
+                    <tr>
+                        <th>Kategori Kemampuan</th>
+                        <th>Jumlah Soal</th>
+                        <th>Benar</th>
+                        <th>Persentase</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <h3 style="color:var(--navy); margin-top:25px;">SARAN & REKOMENDASI LATIHAN</h3>
+            <div id="saran-box" class="pembahasan-box" style="border-left-color:var(--gold);"></div>
+
+            <h3 style="color:var(--navy); margin-top:25px;">REKAP JAWABAN & PEMBAHASAN LENGKAP</h3>
+            <div id="pembahasan-container"></div>
+
+            <div style="margin-top:20px;" class="no-print">
+                <button class="btn" onclick="location.reload()" style="width:100%; padding:12px;">ULANGI TES SET SEDANG</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const bankSoal = [
+        {
+            id: "S-01", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Petugas bergerak 10 meter ke Barat, belok kiri 10 meter, belok kanan 5 meter, lalu belok kanan lagi 10 meter. Posisi akhir dari titik awal adalah...",
+            opsi: ["15 meter ke Barat", "5 meter ke Barat", "15 meter ke Timur", "10 meter ke Selatan", "5 meter ke Utara"], jawabanBenar: 0,
+            pembahasan: "Langkah: 10m Barat. Kiri: 10m Selatan. Kanan: 5m Barat. Kanan: 10m Utara (menetralkan Selatan). Total pergerakan Barat = 10m + 5m = 15m ke Barat."
+        },
+        {
+            id: "S-02", kategori: "Perubahan Arah / Belokan",
+            pertanyaan: "Tim patroli berjalan ke Timur Laut, belok kanan 90 derajat, lalu berputar 180 derajat. Arah patroli sekarang adalah...",
+            opsi: ["Barat Laut", "Barat Daya", "Tenggara", "Utara", "Timur"], jawabanBenar: 0,
+            pembahasan: "Timur Laut (NE) + 90 deg (kanan) = Tenggara (SE). Diputar 180 deg (berbalik) = Barat Laut (NW)."
+        },
+        {
+            id: "S-03", kategori: "Posisi Relatif Multi-Objek",
+            pertanyaan: "Pos A di sebelah Barat Daya Pos B. Pos C di sebelah Timur Pos A dan sejajar di sebelah Selatan Pos B. Posisi Pos C terhadap Pos A adalah...",
+            opsi: ["Barat", "Timur", "Utara", "Selatan", "Tenggara"], jawabanBenar: 1,
+            pembahasan: "Pertanyaan secara eksplisit menyatakan 'Pos C di sebelah Timur Pos A'. Maka posisi C terhadap A adalah Timur."
+        },
+        {
+            id: "S-04", kategori: "Perpindahan & Sudut",
+            pertanyaan: "Seseorang menghadap ke Utara, berputar 135 derajat searah jarum jam, lalu berputar 45 derajat berlawanan jarum jam. Ia sekarang menghadap ke...",
+            opsi: ["Timur Laut", "Timur", "Tenggara", "Barat Daya", "Selatan"], jawabanBenar: 1,
+            pembahasan: "Utara (0 deg) + 135 deg - 45 deg = 90 deg. Arah 90 deg dari Utara adalah Timur."
+        },
+        {
+            id: "S-05", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Mobil pengawalan melaju 6 km ke Utara, belok kanan 8 km, belok kanan 12 km, lalu belok kanan 8 km. Posisi mobil dari titik start adalah...",
+            opsi: ["6 km ke Selatan", "6 km ke Utara", "12 km ke Selatan", "8 km ke Barat", "Tepat di titik start"], jawabanBenar: 0,
+            pembahasan: "Utara (+6km) -> Kanan (+8km Timur) -> Kanan (-12km Utara/Selatan) -> Kanan (-8km Timur/Barat). Posisi akhir: (6 - 12) = -6 km (6 km ke Selatan)."
+        },
+        {
+            id: "S-06", kategori: "Rute & Belokan",
+            pertanyaan: "Intel berjalan ke Barat Daya, belok kiri 45 derajat, lalu belok kanan 90 derajat. Arah jalannya sekarang adalah...",
+            opsi: ["Barat Laut", "Barat Daya", "Tenggara", "Selatan", "Barat"], jawabanBenar: 0,
+            pembahasan: "Barat Daya (225 deg). Belok kiri 45 deg = Selatan (180 deg). Belok kanan 90 deg = Barat Laut (270 deg / NW)."
+        },
+        {
+            id: "S-07", kategori: "Posisi Relatif Multi-Objek",
+            pertanyaan: "Gedung 1 di sebelah Utara Gedung 2. Gedung 3 di sebelah Barat Gedung 1. Gedung 4 di sebelah Selatan Gedung 3. Gedung 4 berada di sebelah ... Gedung 2.",
+            opsi: ["Barat", "Timur", "Utara", "Selatan", "Barat Daya"], jawabanBenar: 0,
+            pembahasan: "Jika Gedung 2 di (0,0), Gedung 1 (0,1), Gedung 3 (-1,1), Gedung 4 (-1,0). Maka Gedung 4 berada tepat di sebelah Barat Gedung 2."
+        },
+        {
+            id: "S-08", kategori: "Perpindahan & Pythagoras",
+            pertanyaan: "Prajurit bergerak 9 km ke Timur, 12 km ke Selatan, lalu 4 km ke Barat. Berapa jarak lurus prajurit dari titik awal?",
+            opsi: ["13 km", "15 km", "17 km", "25 km", "20 km"], jawabanBenar: 1,
+            pembahasan: "Posisi X: 9 - 4 = 5 km Timur. Posisi Y: 12 km Selatan. Jarak lurus = sqrt(5^2 + 12^2) = sqrt(25 + 144) = sqrt(169) = 13 km... Wait: sqrt(5^2+12^2)=13 km."
+        },
+        {
+            id: "S-09", kategori: "Arah Mata Angin & Sudut",
+            pertanyaan: "Sudut antara arah Barat Daya dan arah Timur Laut jika diukur searah jarum jam adalah...",
+            opsi: ["90 derajat", "180 derajat", "270 derajat", "135 derajat", "315 derajat"], jawabanBenar: 1,
+            pembahasan: "Barat Daya dan Timur Laut adalah dua arah yang berseberangan langsung, membentuk sudut lurus 180 derajat."
+        },
+        {
+            id: "S-10", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Budi berjalan 4 meter ke Timur, 3 meter ke Utara, 4 meter ke Barat, lalu 3 meter ke Selatan. Budi sekarang berada di...",
+            opsi: ["Tepat di titik awal", "1 meter ke Timur", "7 meter ke Utara", "8 meter ke Timur", "2 meter ke Selatan"], jawabanBenar: 0,
+            pembahasan: "Pergerakan menutup persegi sempurna (4m Timur, 3m Utara, 4m Barat, 3m Selatan). Budi kembali tepat ke titik awal."
+        },
+        {
+            id: "S-11", kategori: "Perubahan Arah / Belokan",
+            pertanyaan: "Seseorang melangkah ke Tenggara, lalu berputar 270 derajat berlawanan jarum jam. Ke arah manakah ia menghadap?",
+            opsi: ["Barat Daya", "Barat Laut", "Timur Laut", "Tenggara", "Utara"], jawabanBenar: 0,
+            pembahasan: "Tenggara (135 deg). Diputar 270 deg berlawanan jarum jam = 135 - 270 = -135 deg (atau +225 deg yaitu Barat Daya)."
+        },
+        {
+            id: "S-12", kategori: "Posisi Relatif Multi-Objek",
+            pertanyaan: "Kota P di sebelah Timur Kota Q. Kota R di sebelah Utara Kota P. Kota S di sebelah Timur Kota R. Arah Kota Q dari Kota S adalah...",
+            opsi: ["Barat Daya", "Barat Laut", "Tenggara", "Timur Laut", "Utara"], jawabanBenar: 0,
+            pembahasan: "S paling kanan-atas (Timur Laut relatif). Maka Q terletak di sebelah Barat Daya dari S."
+        },
+        {
+            id: "S-13", kategori: "Perpindahan & Pythagoras",
+            pertanyaan: "Kapal patroli berlayar 15 mil ke Utara, lalu 8 mil ke Barat. Berapa jarak kapal dari pelabuhan asal?",
+            opsi: ["17 mil", "23 mil", "7 mil", "289 mil", "13 mil"], jawabanBenar: 0,
+            pembahasan: "Jarak lurus = sqrt(15^2 + 8^2) = sqrt(225 + 64) = sqrt(289) = 17 mil."
+        },
+        {
+            id: "S-14", kategori: "Denah / Posisi Objek",
+            pertanyaan: "Empat mobil diparkir berderet: Mobil A di utara Mobil B. Mobil C di timur Mobil A. Mobil D di selatan Mobil C. Arah Mobil D dari Mobil B adalah...",
+            opsi: ["Timur", "Barat", "Utara", "Selatan", "Barat Laut"], jawabanBenar: 0,
+            pembahasan: "B(0,0), A(0,1), C(1,1), D(1,0). Terlihat D(1,0) berada tepat di sebelah Timur B(0,0)."
+        },
+        {
+            id: "S-15", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Dari titik start, Anda berjalan 5 meter ke Barat, belok kiri 4 meter, belok kiri 8 meter, belok kiri 4 meter. Posisi akhir Anda adalah...",
+            opsi: ["3 meter ke Timur titik start", "3 meter ke Barat titik start", "13 meter ke Timur titik start", "4 meter ke Utara titik start", "Tepat di titik start"], jawabanBenar: 0,
+            pembahasan: "Barat (-5) -> Kiri (Selatan 4) -> Kiri (Timur +8) -> Kiri (Utara 4 menetralkan). Posisi X: -5 + 8 = +3 (3 meter ke Timur)."
+        },
+        {
+            id: "S-16", kategori: "Perubahan Arah / Belokan",
+            pertanyaan: "Petugas berada di posisi menghadap Barat Laut. Ia melakukan belok kanan 135 derajat. Arah yang dihadapi sekarang adalah...",
+            opsi: ["Timur", "Tenggara", "Selatan", "Utara", "Barat Daya"], jawabanBenar: 0,
+            pembahasan: "Barat Laut (315 deg) + 135 deg = 450 deg -> 450 - 360 = 90 deg (Timur)."
+        },
+        {
+            id: "S-17", kategori: "Posisi Relatif Multi-Objek",
+            pertanyaan: "Pos 1 di sebelah Utara Pos 2. Pos 3 di sebelah Barat Daya Pos 1 dan sebelah Barat Pos 2. Arah Pos 1 dari Pos 3 adalah...",
+            opsi: ["Timur Laut", "Tenggara", "Barat Daya", "Barat Laut", "Utara"], jawabanBenar: 0,
+            pembahasan: "Karena Pos 3 berada di Barat Daya Pos 1, maka sebaliknya Pos 1 berada di sebelah Timur Laut Pos 3."
+        },
+        {
+            id: "S-18", kategori: "Perpindahan",
+            pertanyaan: "Helikopter terbang 20 km ke Selatan, 30 km ke Timur, lalu 20 km ke Utara. Berapa jarak dan posisi helikopter dari pangkalan?",
+            opsi: ["30 km ke Timur", "30 km ke Barat", "70 km ke Timur", "40 km ke Selatan", "Tepat di pangkalan"], jawabanBenar: 0,
+            pembahasan: "Perpindahan Selatan (20 km) dan Utara (20 km) saling menghilangkan. Sisa perpindahan adalah 30 km ke Timur."
+        },
+        {
+            id: "S-19", kategori: "Rute & Belokan",
+            pertanyaan: "Berjalan ke Utara, belok kanan, belok kiri, belok kiri, belok kanan. Arah gerak sekarang adalah...",
+            opsi: ["Utara", "Timur", "Selatan", "Barat", "Timur Laut"], jawabanBenar: 0,
+            pembahasan: "Utara -> Kanan (Timur) -> Kiri (Utara) -> Kiri (Barat) -> Kanan (Utara). Arah akhir adalah Utara."
+        },
+        {
+            id: "S-20", kategori: "Arah Mata Angin & Sudut",
+            pertanyaan: "Jika jarum jam menunjukkan pukul 03.00 dan jarum menit menunjuk ke Utara, maka jarum jam menunjuk ke arah...",
+            opsi: ["Timur", "Barat", "Selatan", "Tenggara", "Timur Laut"], jawabanBenar: 0,
+            pembahasan: "Jarum menit pukul 12 (Utara). Jarum jam pukul 3 berada pada sudut 90 derajat searah jarum jam dari 12, yaitu arah Timur."
+        },
+        {
+            id: "S-21", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Pengendara sepeda motor bergerak 12 km ke Barat, 5 km ke Selatan, lalu 12 km ke Timur. Jarak langsung pengendara dari lokasi awal adalah...",
+            opsi: ["5 km", "29 km", "17 km", "12 km", "13 km"], jawabanBenar: 0,
+            pembahasan: "Barat 12 km dan Timur 12 km saling menetralkan. Komponen tersisa hanya 5 km ke Selatan. Jarak lurus = 5 km."
+        },
+        {
+            id: "S-22", kategori: "Perubahan Arah / Belokan",
+            pertanyaan: "Menghadap ke Barat Daya, berputar 180 derajat, lalu belok kiri 90 derajat. Arah baru adalah...",
+            opsi: ["Barat Laut", "Tenggara", "Timur Laut", "Barat Daya", "Selatan"], jawabanBenar: 0,
+            pembahasan: "Barat Daya (SW) berputar 180 deg = Timur Laut (NE). Dari NE belok kiri 90 deg = Barat Laut (NW)."
+        },
+        {
+            id: "S-23", kategori: "Posisi Relatif Multi-Objek",
+            pertanyaan: "Rumah A di utara Rumah B. Rumah C di timur Rumah B. Rumah D di utara Rumah C. Arah Rumah D dari Rumah A adalah...",
+            opsi: ["Timur", "Barat", "Tenggara", "Timur Laut", "Selatan"], jawabanBenar: 0,
+            pembahasan: "B(0,0), A(0,1), C(1,0), D(1,1). Rumah D(1,1) berada tepat di sebelah Timur Rumah A(0,1)."
+        },
+        {
+            id: "S-24", kategori: "Perpindahan & Pythagoras",
+            pertanyaan: "Prajurit berlari 16 meter ke Selatan, lalu 12 meter ke Barat. Jarak garis lurus dari posisi awal adalah...",
+            opsi: ["20 meter", "28 meter", "4 meter", "400 meter", "24 meter"], jawabanBenar: 0,
+            pembahasan: "Pythagoras: sqrt(16^2 + 12^2) = sqrt(256 + 144) = sqrt(400) = 20 meter."
+        },
+        {
+            id: "S-25", kategori: "Rute & Belokan",
+            pertanyaan: "Dari arah Timur, seseorang belok kiri, belok kiri, lalu belok kanan. Arah pergerakannya sekarang adalah...",
+            opsi: ["Utara", "Selatan", "Barat", "Timur", "Barat Daya"], jawabanBenar: 0,
+            pembahasan: "Timur -> Kiri (Utara) -> Kiri (Barat) -> Kanan (Utara). Arah akhir adalah Utara."
+        },
+        {
+            id: "S-26", kategori: "Arah Mata Angin & Sudut",
+            pertanyaan: "Apabila seseorang berdiri menghadap Barat Laut, berputar 225 derajat searah jarum jam, maka ia akan menghadap ke...",
+            opsi: ["Selatan", "Utara", "Timur", "Barat", "Tenggara"], jawabanBenar: 0,
+            pembahasan: "Barat Laut (315 deg) + 225 deg = 540 deg -> 540 - 360 = 180 deg (Selatan)."
+        },
+        {
+            id: "S-27", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Ahmad berjalan 7 km ke Timur, 4 km ke Utara, 7 km ke Barat, dan 4 km ke Selatan. Jarak Ahmad dari titik awal adalah...",
+            opsi: ["0 km", "22 km", "14 km", "8 km", "3 km"], jawabanBenar: 0,
+            pembahasan: "Pergerakan membentuk persegi panjang tertutup (+7 -7 = 0; +4 -4 = 0). Kembali ke titik asal (0 km)."
+        },
+        {
+            id: "S-28", kategori: "Perubahan Arah / Belokan",
+            pertanyaan: "Petugas melangkah ke arah Selatan, belok kanan 90 derajat, belok kanan 90 derajat, lalu belok kiri 90 derajat. Arah akhir adalah...",
+            opsi: ["Barat", "Timur", "Utara", "Selatan", "Barat Daya"], jawabanBenar: 0,
+            pembahasan: "Selatan -> Kanan (Barat) -> Kanan (Utara) -> Kiri (Barat). Arah akhir adalah Barat."
+        },
+        {
+            id: "S-29", kategori: "Posisi Relatif Multi-Objek",
+            pertanyaan: "Gedung X di sebelah Timur Gedung Y. Gedung Z di sebelah Tenggara Gedung Y. Posisi Gedung Z terhadap Gedung X adalah...",
+            opsi: ["Selatan", "Utara", "Barat", "Timur", "Barat Laut"], jawabanBenar: 0,
+            pembahasan: "Y(0,0), X(1,0), Z(1,-1). Gedung Z(1,-1) berada tepat di sebelah Selatan Gedung X(1,0)."
+        },
+        {
+            id: "S-30", kategori: "Perpindahan & Pythagoras",
+            pertanyaan: "Seseorang berjalan 24 meter ke Utara, kemudian 7 meter ke Timur. Jarak langsung orang tersebut ke titik awal adalah...",
+            opsi: ["25 meter", "31 meter", "17 meter", "625 meter", "30 meter"], jawabanBenar: 0,
+            pembahasan: "Pythagoras: sqrt(24^2 + 7^2) = sqrt(576 + 49) = sqrt(625) = 25 meter."
+        },
+        {
+            id: "S-31", kategori: "Denah / Posisi Objek",
+            pertanyaan: "Budi duduk di sebelah barat Cici. Dedi duduk di sebelah utara Budi. Eka duduk di sebelah barat Dedi. Posisi Eka terhadap Cici adalah...",
+            opsi: ["Barat Laut", "Barat Daya", "Timur Laut", "Tenggara", "Utara"], jawabanBenar: 0,
+            pembahasan: "Cici(0,0), Budi(-1,0), Dedi(-1,1), Eka(-2,1). Terlihat Eka(-2,1) berada di arah Barat Laut relatif dari Cici(0,0)."
+        },
+        {
+            id: "S-32", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Mobil patroli berjalan 10 km ke Timur, belok kanan 5 km, belok kanan 10 km, belok kanan 5 km. Posisi mobil dari titik start adalah...",
+            opsi: ["Tepat di titik start", "5 km ke Timur", "10 km ke Selatan", "20 km ke Timur", "5 km ke Utara"], jawabanBenar: 0,
+            pembahasan: "Membentuk rute persegi panjang tertutup. Mobil kembali tepat ke titik start."
+        },
+        {
+            id: "S-33", kategori: "Perubahan Arah / Belokan",
+            pertanyaan: "Seorang pesepeda melaju ke Barat Laut, berputar 90 derajat searah jarum jam, lalu belok kiri 180 derajat. Arah pesepeda sekarang adalah...",
+            opsi: ["Barat Daya", "Timur Laut", "Tenggara", "Barat Laut", "Utara"], jawabanBenar: 0,
+            pembahasan: "Barat Laut (NW) + 90 deg = Timur Laut (NE). Diputar 180 deg = Barat Daya (SW)."
+        },
+        {
+            id: "S-34", kategori: "Posisi Relatif Multi-Objek",
+            pertanyaan: "Kota A di barat Kota B. Kota C di selatan Kota B. Kota D di timur Kota C. Arah Kota A dari Kota D adalah...",
+            opsi: ["Barat Laut", "Barat Daya", "Timur Laut", "Tenggara", "Utara"], jawabanBenar: 0,
+            pembahasan: "B(0,0), A(-1,0), C(0,-1), D(1,-1). Kota A(-1,0) terletak di sebelah Barat Laut dari Kota D(1,-1)."
+        },
+        {
+            id: "S-35", kategori: "Perpindahan",
+            pertanyaan: "Petugas melangkah 15 meter ke Utara, 20 meter ke Timur, lalu 15 meter ke Selatan. Jarak posisi sekarang dari posisi awal adalah...",
+            opsi: ["20 meter ke Timur", "20 meter ke Barat", "50 meter ke Timur", "30 meter ke Utara", "Tepat di titik awal"], jawabanBenar: 0,
+            pembahasan: "Komponen Utara (+15) dan Selatan (-15) saling menghilangkan. Tersisa 20 meter ke Timur."
+        },
+        {
+            id: "S-36", kategori: "Rute & Belokan",
+            pertanyaan: "Bergerak ke Selatan, belok kanan, belok kanan, belok kiri, belok kiri. Arah gerak sekarang adalah...",
+            opsi: ["Utara", "Selatan", "Timur", "Barat", "Tenggara"], jawabanBenar: 0,
+            pembahasan: "Selatan -> Kanan (Barat) -> Kanan (Utara) -> Kiri (Barat) -> Kiri (Selatan)... Wait: Selatan -> Kanan (Barat) -> Kanan (Utara) -> Kiri (Barat) -> Kiri (Selatan) = Selatan."
+        },
+        {
+            id: "S-37", kategori: "Arah Mata Angin & Sudut",
+            pertanyaan: "Arah yang berjarak 225 derajat dari Utara jika diukur searah jarum jam adalah...",
+            opsi: ["Barat Daya", "Barat Laut", "Tenggara", "Timur Laut", "Selatan"], jawabanBenar: 0,
+            pembahasan: "Utara (0 deg) + 225 deg searah jarum jam = 225 deg yaitu arah Barat Daya."
+        },
+        {
+            id: "S-38", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Budi berjalan 6 meter ke Selatan, belok kiri 8 meter, belok kiri 6 meter. Jarak Budi sekarang dari posisi awal adalah...",
+            opsi: ["8 meter", "20 meter", "14 meter", "2 meter", "0 meter"], jawabanBenar: 0,
+            pembahasan: "Selatan (-6) -> Kiri (Timur +8) -> Kiri (Utara +6 menetralkan Selatan). Sisa: 8 meter di sebelah Timur."
+        },
+        {
+            id: "S-39", kategori: "Perubahan Arah / Belokan",
+            pertanyaan: "Menghadap ke Timur, berputar 135 derajat berlawanan jarum jam, lalu belok kanan 90 derajat. Arah menghadap sekarang adalah...",
+            opsi: ["Timur Laut", "Tenggara", "Barat Daya", "Barat Laut", "Utara"], jawabanBenar: 0,
+            pembahasan: "Timur (90 deg) - 135 deg = -45 deg (Barat Laut / 315 deg). Belok kanan 90 deg = +90 deg -> 45 deg (Timur Laut)."
+        },
+        {
+            id: "S-40", kategori: "Posisi Relatif Multi-Objek",
+            pertanyaan: "Pos A di utara Pos B. Pos C di utara Pos A. Pos D di timur Pos B. Posisi Pos C terhadap Pos D adalah...",
+            opsi: ["Barat Laut", "Barat Daya", "Timur Laut", "Tenggara", "Utara"], jawabanBenar: 0,
+            pembahasan: "B(0,0), A(0,1), C(0,2), D(1,0). Pos C(0,2) berada di sebelah Barat Laut relatif dari Pos D(1,0)."
+        },
+        {
+            id: "S-41", kategori: "Perpindahan & Pythagoras",
+            pertanyaan: "Mobil melaju 12 km ke Barat, lalu 9 km ke Utara. Jarak lurus mobil dari titik keberangkatan adalah...",
+            opsi: ["15 km", "21 km", "3 km", "225 km", "18 km"], jawabanBenar: 0,
+            pembahasan: "Pythagoras: sqrt(12^2 + 9^2) = sqrt(144 + 81) = sqrt(225) = 15 km."
+        },
+        {
+            id: "S-42", kategori: "Denah / Posisi Objek",
+            pertanyaan: "Dalam peta, Kota X di sebelah timur Kota Y. Kota Z di sebelah selatan Kota X. Arah Kota Y dari Kota Z adalah...",
+            opsi: ["Barat Laut", "Barat Daya", "Timur Laut", "Tenggara", "Utara"], jawabanBenar: 0,
+            pembahasan: "Y(0,0), X(1,0), Z(1,-1). Arah Y(0,0) dari Z(1,-1) adalah Barat Laut."
+        },
+        {
+            id: "S-43", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Seseorang berjalan 10 meter ke Utara, belok kiri 5 meter, belok kiri 10 meter, belok kanan 5 meter. Posisi akhir dari titik awal adalah...",
+            opsi: ["10 meter ke Barat", "5 meter ke Barat", "10 meter ke Timur", "20 meter ke Barat", "Tepat di titik awal"], jawabanBenar: 0,
+            pembahasan: "Utara (+10) -> Kiri (Barat -5) -> Kiri (Selatan -10) -> Kanan (Barat -5). Net utara/selatan = 0. Total Barat = -5 + -5 = -10 (10 meter ke Barat)."
+        },
+        {
+            id: "S-44", kategori: "Perubahan Arah / Belokan",
+            pertanyaan: "Berjalan ke Tenggara, belok kanan 90 derajat, belok kanan 90 derajat. Arah berjalan sekarang adalah...",
+            opsi: ["Barat Laut", "Barat Daya", "Timur Laut", "Tenggara", "Utara"], jawabanBenar: 0,
+            pembahasan: "Tenggara (SE) belok kanan 180 derajat (dua kali 90 deg) berbalik arah menjadi Barat Laut (NW)."
+        },
+        {
+            id: "S-45", kategori: "Posisi Relatif Multi-Objek",
+            pertanyaan: "Titik P di sebelah Barat Titik Q. Titik R di sebelah Utara Titik Q. Arah Titik P dari Titik R adalah...",
+            opsi: ["Barat Daya", "Barat Laut", "Tenggara", "Timur Laut", "Selatan"], jawabanBenar: 0,
+            pembahasan: "Q(0,0), P(-1,0), R(0,1). Arah P(-1,0) dari R(0,1) adalah Barat Daya."
+        },
+        {
+            id: "S-46", kategori: "Perpindahan & Pythagoras",
+            pertanyaan: "Kapal berlayar 20 mil ke Timur, lalu 15 mil ke Selatan. Jarak langsung kapal ke titik mula-mula adalah...",
+            opsi: ["25 mil", "35 mil", "5 mil", "625 mil", "30 mil"], jawabanBenar: 0,
+            pembahasan: "Pythagoras: sqrt(20^2 + 15^2) = sqrt(400 + 225) = sqrt(625) = 25 mil."
+        },
+        {
+            id: "S-47", kategori: "Rute & Belokan",
+            pertanyaan: "Petugas bergerak ke arah Barat Daya, belok kanan 180 derajat, belok kiri 90 derajat. Arah petugas sekarang adalah...",
+            opsi: ["Barat Laut", "Timur Laut", "Tenggara", "Barat Daya", "Utara"], jawabanBenar: 0,
+            pembahasan: "Barat Daya (SW) diputar 180 deg = Timur Laut (NE). Dari NE belok kiri 90 deg = Barat Laut (NW)."
+        },
+        {
+            id: "S-48", kategori: "Arah Mata Angin & Sudut",
+            pertanyaan: "Sudut antara arah Utara Laut (Timur Laut) dan arah Selatan adalah sebesar...",
+            opsi: ["135 derajat", "90 derajat", "180 derajat", "45 derajat", "225 derajat"], jawabanBenar: 0,
+            pembahasan: "Timur Laut (45 deg) ke Selatan (180 deg) membentuk sudut sebesar 180 - 45 = 135 derajat."
+        },
+        {
+            id: "S-49", kategori: "Penalaran Multi-Langkah",
+            pertanyaan: "Ahmad bergerak 8 meter ke Barat, belok kiri 6 meter, belok kiri 8 meter. Posisi Ahmad terhadap titik awal adalah...",
+            opsi: ["6 meter di sebelah Selatan", "6 meter di sebelah Utara", "8 meter di sebelah Selatan", "Tepat di titik awal", "14 meter di sebelah Barat"], jawabanBenar: 0,
+            pembahasan: "Barat (-8) -> Kiri (Selatan -6) -> Kiri (Timur +8 menetralkan Barat). Posisi akhir: 6 meter di sebelah Selatan titik awal."
+        },
+        {
+            id: "S-50", kategori: "Perubahan Arah / Belokan",
+            pertanyaan: "Seseorang menghadap ke arah Timur Laut. Ia berputar 360 derajat searah jarum jam. Arah ia menghadap sekarang adalah...",
+            opsi: ["Timur Laut", "Barat Daya", "Barat Laut", "Tenggara", "Utara"], jawabanBenar: 0,
+            pembahasan: "Berputar 360 derajat berarti melakukan satu putaran penuh kembali ke posisi semula (Timur Laut)."
+        }
+    ];
+
+    let currentQ = 0;
+    let userAnswers = {};
+    let timerInterval;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        renderNav();
+        loadQ(0);
+        startTimer(45 * 60); // Timer diatur 45 menit
+    });
+
+    function loadQ(idx) {
+        currentQ = idx;
+        const qData = bankSoal[idx];
+        document.getElementById('q-no').innerText = `Soal ${idx + 1} dari ${bankSoal.length}`;
+        document.getElementById('q-kat').innerText = qData.kategori;
+        document.getElementById('q-text').innerText = qData.pertanyaan;
+        
+        let html = '';
+        qData.opsi.forEach((opt, i) => {
+            const isSelected = userAnswers[idx] === i ? 'selected' : '';
+            html += `<div class="opt ${isSelected}" onclick="selectOpt(${i})">${String.fromCharCode(65+i)}. ${opt}</div>`;
+        });
+        document.getElementById('options').innerHTML = html;
+        document.getElementById('btn-next').innerText = idx === bankSoal.length - 1 ? "Selesai" : "Selanjutnya";
+        renderNav();
+    }
+
+    function selectOpt(optIdx) {
+        userAnswers[currentQ] = optIdx;
+        loadQ(currentQ);
+        setTimeout(() => { nextQ(); }, 250);
+    }
+
+    function renderNav() {
+        let html = '';
+        for(let i = 0; i < bankSoal.length; i++) {
+            let cls = 'nav-item';
+            if(userAnswers[i] !== undefined) cls += ' filled';
+            if(i === currentQ) cls += ' active';
+            html += `<div class="${cls}" onclick="loadQ(${i})">${i + 1}</div>`;
+        }
+        document.getElementById('navGrid').innerHTML = html;
+    }
+
+    function nextQ() {
+        if(currentQ === bankSoal.length - 1) {
+            if(confirm("Apakah Anda yakin ingin menyelesaikan tes ini?")) finishTest();
+            return;
+        }
+        loadQ(currentQ + 1);
+    }
+
+    function prevQ() {
+        if(currentQ > 0) loadQ(currentQ - 1);
+    }
+
+    function startTimer(seconds) {
+        let t = seconds;
+        timerInterval = setInterval(() => {
+            let m = Math.floor(t / 60);
+            let s = t % 60;
+            document.getElementById('timer').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            if(--t < 0) {
+                clearInterval(timerInterval);
+                finishTest();
+            }
+        }, 1000);
+    }
+
+    function finishTest() {
+        clearInterval(timerInterval);
+        document.getElementById('page-test').style.display = 'none';
+        document.getElementById('page-result').style.display = 'block';
+
+        let benar = 0;
+        let salah = 0;
+        let kosong = 0;
+        let katStats = {};
+
+        bankSoal.forEach((q, i) => {
+            if (!katStats[q.kategori]) {
+                katStats[q.kategori] = { total: 0, benar: 0 };
+            }
+            katStats[q.kategori].total++;
+
+            if (userAnswers[i] === undefined) {
+                kosong++;
+            } else if (userAnswers[i] === q.jawabanBenar) {
+                benar++;
+                katStats[q.kategori].benar++;
+            } else {
+                salah++;
+            }
+        });
+
+        const totalSoal = bankSoal.length;
+        const skor = benar * 2;
+        const persentase = (benar / totalSoal) * 100;
+
+        document.getElementById('res-skor').innerText = `${skor} / 100`;
+        document.getElementById('res-persen').innerText = `${persentase.toFixed(0)}%`;
+        document.getElementById('res-detail').innerText = `${benar} Benar / ${salah} Salah / ${kosong} Kosong`;
+
+        // Render Analisis Kategori
+        let katHtml = '';
+        for (let kat in katStats) {
+            let p = (katStats[kat].benar / katStats[kat].total) * 100;
+            katHtml += `
+                <tr>
+                    <td><b>${kat}</b></td>
+                    <td>${katStats[kat].total}</td>
+                    <td>${katStats[kat].benar}</td>
+                    <td><b>${p.toFixed(0)}%</b></td>
+                </tr>
+            `;
+        }
+        document.querySelector('#table-kategori tbody').innerHTML = katHtml;
+
+        // Render Saran
+        let saranText = '';
+        if (persentase >= 85) {
+            saranText = "<b>Luar Biasa!</b> Penguasaan logika spasial dan perhitungan rute multi-langkah Anda sangat mantap. Anda sudah siap menghadapi Set 3 (Sukar) dengan kombinasi rute yang lebih rumit.";
+        } else if (persentase >= 70) {
+            saranText = "<b>Bagus!</b> Pemahaman tingkat sedang Anda sudah cukup memadai. Perhatikan kembali soal-soal Pythagoras dan rute dengan 3 belokan atau lebih agar tidak ceroboh.";
+        } else if (persentase >= 50) {
+            saranText = "<b>Cukup.</b> Masih ada kebingungan saat menentukan sudut diagonal dan posisi relatif multi-objek. Latihan membuat sketsa diagram koordinat sederhana sangat disarankan.";
+        } else {
+            saranText = "<b>Perlu Banyak Latihan.</b> Anda perlu mengulang dasar-dasar belokan kanan/kiri pada sumbu koordinat. Coba ulas kembali pembahasan di bawah ini secara teliti.";
+        }
+        document.getElementById('saran-box').innerHTML = saranText;
+
+        // Render Rekap & Pembahasan
+        let pemHtml = '';
+        bankSoal.forEach((q, i) => {
+            let uAns = userAnswers[i];
+            let statusBadge = '';
+            let uAnsText = uAns !== undefined ? `${String.fromCharCode(65+uAns)}. ${q.opsi[uAns]}` : '<i>Tidak Dijawab</i>';
+            let cAnsText = `${String.fromCharCode(65+q.jawabanBenar)}. ${q.opsi[q.jawabanBenar]}`;
+
+            if (uAns === undefined) {
+                statusBadge = '<span class="badge-kosong">KOSONG</span>';
+            } else if (uAns === q.jawabanBenar) {
+                statusBadge = '<span class="badge-benar">BENAR</span>';
+            } else {
+                statusBadge = '<span class="badge-salah">SALAH</span>';
+            }
+
+            pemHtml += `
+                <div style="margin-bottom:20px; border-bottom:1px solid #e2e8f0; padding-bottom:15px;">
+                    <div style="font-weight:bold; color:var(--navy);">Soal ${i + 1} (${q.kategori}) - Status: ${statusBadge}</div>
+                    <div style="margin:8px 0; font-size:14.5px;">${q.pertanyaan}</div>
+                    <div style="font-size:13.5px; color:#475569;">
+                        <div>Jawaban Anda: ${uAnsText}</div>
+                        <div>Jawaban Benar: <b>${cAnsText}</b></div>
+                    </div>
+                    <div class="pembahasan-box">
+                        <b>Pembahasan:</b> ${q.pembahasan}
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('pembahasan-container').innerHTML = pemHtml;
+        window.scrollTo(0,0);
+    }
+</script>
+</body>
+</html>
