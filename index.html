@@ -93,7 +93,7 @@
     <main class="max-w-4xl mx-auto px-4 py-10 w-full flex-grow">
       <div class="mb-6 flex justify-between items-center border-b border-slate-200 pb-3">
         <h2 class="text-lg font-semibold text-slate-800">Daftar Modul & Berkas</h2>
-        <span class="text-xs bg-slate-200 text-slate-700 px-2,5 py-1 rounded-full font-medium">Auto-Shuffled</span>
+        <span class="text-xs bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full font-medium">Auto-Shuffled</span>
       </div>
 
       <!-- GRID MENU (Urutan diacak otomatis saat muat) -->
@@ -103,7 +103,7 @@
         <a href="mata_angin_1.html" class="menu-item group bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-blue transition flex items-center justify-between">
           <div>
             <h3 class="font-semibold text-slate-800 group-hover:text-brand-blue transition">Mata Angin 1</h3>
-            <p class="text-xs text-slate-500 mt-0,5">Modul pembelajaran bagian 1</p>
+            <p class="text-xs text-slate-500 mt-0.5">Modul pembelajaran bagian 1</p>
           </div>
           <span class="text-slate-400 group-hover:translate-x-1 transition-transform">→</span>
         </a>
@@ -112,7 +112,7 @@
         <a href="mata_angin_2.html" class="menu-item group bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-blue transition flex items-center justify-between">
           <div>
             <h3 class="font-semibold text-slate-800 group-hover:text-brand-blue transition">Mata Angin 2</h3>
-            <p class="text-xs text-slate-500 mt-0,5">Modul pembelajaran bagian 2</p>
+            <p class="text-xs text-slate-500 mt-0.5">Modul pembelajaran bagian 2</p>
           </div>
           <span class="text-slate-400 group-hover:translate-x-1 transition-transform">→</span>
         </a>
@@ -121,7 +121,7 @@
         <a href="mata_angin_3.html" class="menu-item group bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-blue transition flex items-center justify-between">
           <div>
             <h3 class="font-semibold text-slate-800 group-hover:text-brand-blue transition">Mata Angin 3</h3>
-            <p class="text-xs text-slate-500 mt-0,5">Modul pembelajaran bagian 3</p>
+            <p class="text-xs text-slate-500 mt-0.5">Modul pembelajaran bagian 3</p>
           </div>
           <span class="text-slate-400 group-hover:translate-x-1 transition-transform">→</span>
         </a>
@@ -130,7 +130,7 @@
         <a href="mata_angin_mix.html" class="menu-item group bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-blue transition flex items-center justify-between">
           <div>
             <h3 class="font-semibold text-slate-800 group-hover:text-brand-blue transition">Mata Angin Mix</h3>
-            <p class="text-xs text-slate-500 mt-0,5">Latihan gabungan & simulasi</p>
+            <p class="text-xs text-slate-500 mt-0.5">Latihan gabungan & simulasi</p>
           </div>
           <span class="text-slate-400 group-hover:translate-x-1 transition-transform">→</span>
         </a>
@@ -143,7 +143,7 @@
             </div>
             <div>
               <h3 class="font-semibold text-white group-hover:text-slate-200 transition">mata_angin.pdf</h3>
-              <p class="text-xs text-slate-300 mt-0,5">Buka berkas PDF langsung</p>
+              <p class="text-xs text-slate-300 mt-0.5">Buka berkas PDF langsung</p>
             </div>
           </div>
           <span class="text-slate-300 group-hover:translate-x-1 transition-transform">→</span>
@@ -161,23 +161,24 @@
 
   <!-- JAVASCRIPT & SECURITY LOGIC -->
   <script>
-    // Hash SHA-256 untuk password default: "persona2026"
-    const DEFAULT_PASSWORD_HASH = "b56e6bf1ffc77bf42c7552554d6aa967008745d1ec468eb37ed78dc59005085e";
+    // Hash SHA-256 untuk kata kunci "persona05" (selalu dikonversi ke huruf kecil)
+    const TARGET_PASSWORD_HASH = "81ff5bd2208761ed81e0be6c87ed9ee17fa8331bb7d0b38d0f191a6d912ef322";
 
-    // 1. Fungsi Hash Sederhana
+    // 1. Fungsi Hash SHA-256
     async function hashPassword(str) {
       const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
       return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // 2. Proteksi Login & Sesi
+    // 2. Proteksi Login & Sesi (Case-Insensitive)
     async function handleLogin(e) {
       e.preventDefault();
-      const input = document.getElementById('passwordInput').value;
+      // Mengubah input pengguna menjadi huruf kecil (lowercase) agar huruf besar/kecil tidak berpengaruh
+      const rawInput = document.getElementById('passwordInput').value.trim().toLowerCase();
       const errorMsg = document.getElementById('errorMessage');
       
-      const hashedInput = await hashPassword(input);
-      if (hashedInput === DEFAULT_PASSWORD_HASH) {
+      const hashedInput = await hashPassword(rawInput);
+      if (hashedInput === TARGET_PASSWORD_HASH) {
         sessionStorage.setItem('portal_authenticated', 'true');
         unlockPortal();
       } else {
@@ -202,10 +203,8 @@
     function shuffleMenu() {
       const grid = document.getElementById('menuGrid');
       const items = Array.from(grid.children);
-      // Pisahkan menu PDF agar tetap di bawah (posisi spanned)
-      const pdfItem = items.pop(); 
+      const pdfItem = items.pop(); // Pertahankan PDF di posisi paling bawah
       
-      // Acak item HTML biasa
       for (let i = items.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [items[i], items[j]] = [items[j], items[i]];
@@ -213,12 +212,11 @@
       
       grid.innerHTML = '';
       items.forEach(item => grid.appendChild(item));
-      grid.appendChild(pdfItem); // Pasang kembali PDF di paling bawah
+      grid.appendChild(pdfItem);
     }
 
-    // 4. Hitung Mundur Kedaluwarsa (6 Bulan dari Sekarang)
+    // 4. Hitung Mundur Kedaluwarsa (Tepat 6 Bulan dari Sekarang)
     function startCountdown() {
-      // Atur tanggal kadaluarsa 6 bulan dari sekarang
       const targetDate = new Date();
       targetDate.setMonth(targetDate.getMonth() + 6);
 
